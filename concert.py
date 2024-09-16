@@ -1,9 +1,22 @@
 import sqlite3
 
+
+class Concert:
+    def __init__(self, id, band_name, venue_title, date):
+        self.id = id
+        self.band_name = band_name
+        self.venue_title = venue_title
+        self.date = date
+
+    def __repr__(self):
+        return f"Concert(id={self.id}, band_name='{self.band_name}', venue_title='{self.venue_title}', date='{self.date}')"
+    
+@staticmethod
 def get_connection():
     return sqlite3.connect('concerts.db')
 
 # Method to get the Band instance for a Concert
+@staticmethod
 def get_band_for_concert(concert_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -18,6 +31,7 @@ def get_band_for_concert(concert_id):
     return result
 
 # Method to get the Venue instance for a Concert
+@staticmethod
 def get_venue_for_concert(concert_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -32,6 +46,14 @@ def get_venue_for_concert(concert_id):
     return result
 
 # Method to get all concerts for a Venue
+class Venue:
+    def __init__(self, title, city):
+        self.title = title
+        self.city = city
+
+    def __repr__(self):
+        return f"Venue(title='{self.title}', city='{self.city}')"
+@staticmethod
 def get_concerts_for_venue(venue_title):
     conn = get_connection()
     cursor = conn.cursor()
@@ -44,6 +66,14 @@ def get_concerts_for_venue(venue_title):
     return results
 
 # Method to get all bands who performed at a Venue
+class Band:
+    def __init__(self, name, hometown):
+        self.name = name
+        self.hometown = hometown
+
+    def __repr__(self):
+        return f"Band(name='{self.name}', hometown='{self.hometown}')"
+@staticmethod
 def get_bands_for_venue(venue_title):
     conn = get_connection()
     cursor = conn.cursor()
@@ -58,6 +88,7 @@ def get_bands_for_venue(venue_title):
     return results
 
 # Method to get all concerts a Band has played
+@staticmethod
 def get_concerts_for_band(band_name):
     conn = get_connection()
     cursor = conn.cursor()
@@ -70,6 +101,7 @@ def get_concerts_for_band(band_name):
     return results
 
 # Method to get all venues a Band has performed at
+@staticmethod
 def get_venues_for_band(band_name):
     conn = get_connection()
     cursor = conn.cursor()
@@ -84,6 +116,32 @@ def get_venues_for_band(band_name):
     return results
 
 # Method to add a concert for a Band
+@staticmethod
+def add_band(band_name, hometown):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO bands (name, hometown)
+        VALUES (?, ?)
+    """, (band_name, hometown))
+    conn.commit()
+    conn.close()
+    return cursor.lastrowid
+
+@staticmethod
+def add_venue(venue_title, city):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO venues (title, city)
+        VALUES (?, ?)
+    """, (venue_title, city))
+    conn.commit()
+    conn.close()
+    return cursor.lastrowid
+
+# Method to add a concert for a Band
+@staticmethod
 def add_concert(band_name, venue_title, date):
     conn = get_connection()
     cursor = conn.cursor()
@@ -95,6 +153,7 @@ def add_concert(band_name, venue_title, date):
     conn.close()
 
 # Method to get all introductions for a Band
+@staticmethod
 def get_all_introductions(band_name):
     conn = get_connection()
     cursor = conn.cursor()
@@ -110,6 +169,7 @@ def get_all_introductions(band_name):
     return [r[0] for r in results]
 
 # Method to get the Band with the most performances
+@staticmethod
 def get_band_with_most_performances():
     conn = get_connection()
     cursor = conn.cursor()
@@ -126,6 +186,7 @@ def get_band_with_most_performances():
     return result
 
 # Method to find a concert at a venue on a specific date
+@staticmethod
 def find_concert_on_date(venue_title, date):
     conn = get_connection()
     cursor = conn.cursor()
@@ -138,6 +199,7 @@ def find_concert_on_date(venue_title, date):
     return result
 
 # Method to find the most frequent band at a venue
+@staticmethod
 def get_most_frequent_band_at_venue(venue_title):
     conn = get_connection()
     cursor = conn.cursor()
@@ -153,3 +215,5 @@ def get_most_frequent_band_at_venue(venue_title):
     result = cursor.fetchone()
     conn.close()
     return result
+
+
